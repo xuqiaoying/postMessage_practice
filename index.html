@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
   <title></title>
   <meta charset="utf-8">
@@ -12,17 +11,14 @@
       margin: 0;
       padding: 0;
     }
-
     html {
       font-size: 20px;
     }
-
     body {
       height: 100vh;
       overflow: hidden;
       width: 100vw;
     }
-
     main {
       background-color: #eee;
       border: .25rem solid #0ff;
@@ -30,7 +26,6 @@
       overflow: hidden;
       width: 100%;
     }
-
     ul {
       height: 100%;
       list-style: none;
@@ -38,15 +33,13 @@
       padding: .5rem;
       width: 100%;
     }
-
     ul li {
       display: flex;
       padding: 1.5rem .2rem;
       width: 100%;
     }
-
-    ul li>p {
-      background-color: #00f;
+    ul li > p {
+      background-color: #00f; 
       border: .1rem solid #0ff;
       border-radius: .3rem;
       color: #f0f;
@@ -55,37 +48,38 @@
       white-space: nowrap;
       max-width: 25rem;
     }
-
     ul li.textright {
       justify-content: flex-end;
     }
-
-    ul li.textright>p {
+    ul li.textright > p {
       background-color: #f0f;
       color: #00f;
     }
-
     ul li:hover {
       cursor: pointer;
     }
   </style>
 </head>
-
 <body>
   <main>
     <ul>
     </ul>
   </main>
+  <script type="text/javascript" src="replays.js"></script>
   <script type="text/javascript">
     var myKey = 'location_mydata';
     var myData = JSON.parse(localStorage.getItem(myKey)) || [];
     var myUl = document.querySelector('ul');
+    var replayarry = [];
+    for (item in replays) {
+        replayarry.push(item);
+      }
 
-    function render() {
-      myData.forEach(function (item, i) {
+    function render(){
+      myData.forEach(function(item,i){
         if (item.type === 'NPC') {
           myUl.innerHTML += `<li><p>${item.text}</p></li>`;
-        } else {
+        }else {
           myUl.innerHTML += `<li class="textright"><p>${item.text}</p></li>`;
         }
       });
@@ -93,40 +87,44 @@
     }
     render();
 
-    function following() {
+    function following(){
       if (myUl.scrollHeight > myUl.clientHeight) {
         myUl.scrollTop = myUl.scrollHeight - myUl.clientHeight;
       }
     }
 
-    function replay() {
-      var replay = `我是编号为${Math.floor(Math.random()*1000)}的随机智能回应~`;
-       
-      myData.push({ text: replay, type: 'NPC' });
+    function replay(data){
+      var  value = data.toLowerCase();
+      var replay = '';
+      if (replayarry.some(item=>{if(item===value)return true})) {
+        replay = `${replays[value][Math.floor(Math.random()*(replays[value].length))]}`;
+      }else {
+        replay = `${replays["__don'tKnow"][Math.floor(Math.random()*(replays["__don'tKnow"].length))]}`;
+      }
+      myData.push({text:replay, type:'NPC'});
       document.querySelector('ul').innerHTML = '';
       render();
-      localStorage.setItem(myKey, JSON.stringify(myData));
+      localStorage.setItem(myKey,JSON.stringify(myData));
     };
 
-    window.addEventListener('message', function (e) {
-      console.log('e: ' + e + ' e.data: ' + e.data);
-      myData.push({ text: e.data, type: 'PC' });
+    window.addEventListener('message',function(e){
+      console.log('e: '+e+' e.data: '+e.data);
+      myData.push({text:e.data, type:'PC'});
       myUl.innerHTML = '';
       render();
-      localStorage.setItem(myKey, JSON.stringify(myData));
-      replay();
+      localStorage.setItem(myKey,JSON.stringify(myData));
+      replay(e.data);
     });
 
-    myUl.addEventListener('click', function (e) {
+    myUl.addEventListener('click',function(e){
       var T = e.target;
       if (T.nodeName === 'P') {
         var index = [].indexOf.call(this.children, T.parentElement);
-        myData.splice(index, 1);
-        localStorage.setItem(myKey, JSON.stringify(myData));
+        myData.splice(index,1);
+        localStorage.setItem(myKey,JSON.stringify(myData));
         this.removeChild(T.parentElement);
       }
     })
   </script>
 </body>
-
 </html>
