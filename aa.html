@@ -7,14 +7,14 @@
   
  <body>  
   
-  <iframe src="https://xuqiaoying.github.io/postMessage_practice/" name="myframe" width="1000" height="800"></iframe> 
+  <iframe src="https://xuqiaoying.github.io/postMessage_practice/" name="myframe" id="xuqiaoying" width="1000" height="800"></iframe> 
   <br>
   <br>
   <p>A.html main</p>  
   <br> 
   <script>
     document.querySelector('p').addEventListener('click',function(){
-        window.myframe.contentWindow.postMessage('love','*')
+        window.xuqiaoying.contentWindow.postMessage('love','*')
     })
   </script>
  </body>  
